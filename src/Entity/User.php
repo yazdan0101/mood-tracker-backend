@@ -2,8 +2,12 @@
 
 namespace App\Entity;
 
+
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -30,6 +34,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, MoodEntry>
+     */
+    #[ORM\OneToMany(targetEntity: MoodEntry::class, mappedBy: 'user')]
+    private Collection $moodEntries;
+
+    public function __construct()
+
+    {
+        $this->uuid = Uuid::v4();
+        $this->roles = ['ROLE_USER'];
+        $this->moodEntries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,13 +108,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
     /**
      * @see UserInterface
      */
@@ -105,4 +116,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    /**
+     * @return Collection<int, MoodEntry>
+     */
+    public function getMoodEntries(): Collection
+    {
+        return $this->moodEntries;
+    }
+
+    public function addMoodEntry(MoodEntry $moodEntry): static
+    {
+        if (!$this->moodEntries->contains($moodEntry)) {
+            $this->moodEntries->add($moodEntry);
+            $moodEntry->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMoodEntry(MoodEntry $moodEntry): static
+    {
+        if ($this->moodEntries->removeElement($moodEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($moodEntry->getUser() === $this) {
+                $moodEntry->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+    public function setUsername(string $username): self
+{
+    $this->username = $username;
+    return $this;
+}
+
+public function setPassword(string $password): self
+{
+    $this->password = $password;
+    return $this;
+}
+
 }
