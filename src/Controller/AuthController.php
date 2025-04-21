@@ -20,32 +20,29 @@ class AuthController extends AbstractController
         $this->em = $em;
         $this->hasher = $hasher;
     }
-
     public function login(Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $username = $data['username'] ?? '';
-        $password = $data['password'] ?? '';
+{
+    $data = json_decode($request->getContent(), true) ?? [];
+    $username = $data['username'] ?? '';
+    $password = $data['password'] ?? '';
 
-        $user = $this->em->getRepository(User::class)
-            ->findOneBy(['username' => $username]);
+    $user = $this->em->getRepository(User::class)
+        ->findOneBy(['username' => $username]);
 
-        if (!$user || !$this->hasher->isPasswordValid($user, $password)) {
-            return $this->json(['error' => 'Invalid credentials'], 401);
-        }
-
-        $payload = [
-            'sub' => $user->getId(),
-            'username' => $user->getUsername(),
-            'iat' => time(),
-            'exp' => time() + 3600, // 1 hour
-        ];
-
-        // Use a secret from .env (you’ll set this next)
-        $secret = $this->getParameter('app.jwt_secret');
-
-        $token = JWT::encode($payload, $secret, 'HS256');
-
-        return $this->json(['token' => $token]);
+    if (!$user) {
+        return $this->json(['error' => 'User not found', 'provided_username' => $username], 404);
     }
+
+    $hashed = $user->getPassword();
+    $isValid = $this->hasher->isPasswordValid($user, $password);
+
+    return $this->json([
+        'db_username'      => $user->getUsername(),
+        'db_hashed_pass'   => $hashed,
+        'provided_password'=> $password,
+        'password_valid?'  => $isValid,
+    ]);
+}
+
+
 }

@@ -41,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: MoodEntry::class, mappedBy: 'user')]
     private Collection $moodEntries;
 
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    private ?string $username = null;
+
     public function __construct()
 
     {
@@ -113,8 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        
     }
 
     /**
@@ -151,6 +153,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     $this->username = $username;
     return $this;
 }
+    public function getUsername(): ?string
+{
+    return $this->username;
+}
+
 
 public function setPassword(string $password): self
 {

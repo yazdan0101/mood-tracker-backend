@@ -8,4 +8,4 @@ api_register:
 api_login:
   path: /api/login
   controller: App\Controller\AuthController::login
-  methods: [POST]
+  methods: [GET,POST]
