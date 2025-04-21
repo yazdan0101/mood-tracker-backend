@@ -9,3 +9,7 @@ api_login:
   path: /api/login
   controller: App\Controller\AuthController::login
   methods: [GET,POST]
+api_mood_entries_create:
+  path: /api/mood-entries
+  controller: App\Controller\Api\MoodEntryController::create
+  methods: [POST]
