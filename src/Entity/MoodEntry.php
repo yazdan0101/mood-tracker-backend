@@ -23,8 +23,8 @@ class MoodEntry
     #[ORM\Column(type: Types::ARRAY)]
     private array $feelingList = [];
 
-    #[ORM\Column(type: Types::ARRAY)]
-    private array $sleepQuality = [];
+    #[ORM\Column(length: 255)]
+    private ?string $sleepQuality = null;
 
     #[ORM\Column(type: Types::ARRAY)]
     private array $activityList = [];
@@ -80,12 +80,12 @@ class MoodEntry
         return $this;
     }
 
-    public function getSleepQuality(): array
+    public function getSleepQuality(): ?string
     {
         return $this->sleepQuality;
     }
 
-    public function setSleepQuality(array $sleepQuality): static
+    public function setSleepQuality(string $sleepQuality): static
     {
         $this->sleepQuality = $sleepQuality;
 

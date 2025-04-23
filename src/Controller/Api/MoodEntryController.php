@@ -22,6 +22,7 @@ class MoodEntryController extends AbstractController
         $this->jwtSecret = $jwtSecret;
     }
 
+    #[\Symfony\Component\Routing\Annotation\Route('/api/mood-entries', name: 'api_mood_entries_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         // 1. Authenticate via Bearer token
@@ -46,13 +47,16 @@ class MoodEntryController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
         $requiredFields = ['moodType', 'occurredAt', 'feelingList', 'sleepQuality', 'activityList', 'bestAboutToday'];
         foreach ($requiredFields as $field) {
-            if (empty($data[$field])) {
+            if (!isset($data[$field]) || $data[$field] === '') {
                 return $this->json(['error' => "Field '$field' is required"], 400);
             }
         }
 
-        if (!is_array($data['feelingList']) || !is_array($data['sleepQuality']) || !is_array($data['activityList'])) {
-            return $this->json(['error' => 'feelingList, sleepQuality, and activityList must be arrays'], 400);
+        if (!is_array($data['feelingList']) || !is_array($data['activityList'])) {
+            return $this->json(['error' => 'feelingList and activityList must be arrays'], 400);
+        }
+        if (!is_string($data['sleepQuality'])) {
+            return $this->json(['error' => 'sleepQuality must be a string'], 400);
         }
 
         // 3. Create MoodEntry entity
