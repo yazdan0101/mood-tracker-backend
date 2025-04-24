@@ -14,10 +14,7 @@ This is the Symfony‑based REST API for the Mood Tracker application. It provid
 - [Running the Server](#running-the-server)  
 - [API Endpoints](#api-endpoints)  
 - [Authentication](#authentication)  
-- [Testing Credentials](#testing-credentials)  
-- [Invite & Access](#invite--access)  
-- [License](#license)
-
+- [Testing Credentials](#testing-credentials)
 ---
 
 ## Tech Stack
@@ -41,7 +38,7 @@ This is the Symfony‑based REST API for the Mood Tracker application. It provid
 
 1. **Clone the repo**  
    ```bash
-   git clone https://github.com/your-org/mood-tracker-backend.git
+   git clone https://github.com/yazdan0101/mood-tracker-backend.git
    cd mood-tracker-backend
    ```
 
